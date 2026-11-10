@@ -5,18 +5,66 @@
  */
 
 document.addEventListener('DOMContentLoaded', function () {
-    // 1. Initialize Lucide Icons if available
+    // 1. Initialize Theme Engine (Light / Dark Mode)
+    initThemeEngine();
+
+    // 2. Initialize Lucide Icons if available
     initLucideIcons();
 
-    // 2. Setup Responsive Sidebar Toggle for Dashboards
+    // 3. Setup Responsive Sidebar Toggle for Dashboards
     setupSidebarToggle();
 
-    // 3. Setup Password Visibility Toggles
+    // 4. Setup Password Visibility Toggles
     setupPasswordToggles();
 
-    // 4. Setup Dismissible Alerts
+    // 5. Setup Dismissible Alerts
     setupDismissibleAlerts();
 });
+
+/**
+ * CareSync Medico-Inspired Theme Engine
+ * Manages light / dark state, persistence in localStorage, and tactile switch animations
+ */
+function initThemeEngine() {
+    const savedTheme = localStorage.getItem('caresync_theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+    applyTheme(initialTheme);
+
+    const themeSwitches = document.querySelectorAll('.theme-switch');
+    themeSwitches.forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(targetTheme);
+        });
+    });
+
+    // Listen for OS theme changes if user has not set an explicit override
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+            if (!localStorage.getItem('caresync_theme')) {
+                applyTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+    }
+}
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('caresync_theme', theme);
+
+    const themeSwitches = document.querySelectorAll('.theme-switch');
+    themeSwitches.forEach(btn => {
+        btn.setAttribute('aria-checked', theme === 'dark');
+        btn.setAttribute('title', theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+    });
+
+    // Dispatch event for any chart re-renders or custom components
+    window.dispatchEvent(new CustomEvent('caresync:themechange', { detail: { theme: theme } }));
+}
 
 /**
  * Initializes Lucide SVG icons across the document

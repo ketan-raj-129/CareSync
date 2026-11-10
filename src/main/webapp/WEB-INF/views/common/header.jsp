@@ -9,6 +9,18 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><c:out value="${pageTitle != null ? pageTitle : 'CareSync — Healthcare, connected.'}" /></title>
 
+    <!-- Immediate Theme Detection (Prevents FOUC) -->
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('caresync_theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var theme = saved || (prefersDark ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {}
+        })();
+    </script>
+
     <!-- CareSync Design System Stylesheets -->
     <link rel="stylesheet" href="${ctx}/assets/css/caresync.css">
 

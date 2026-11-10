@@ -21,6 +21,19 @@ body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color var(--transition-theme),
+                color var(--transition-theme);
+}
+
+/* Global Smooth Theme Transition */
+.card, .card-header, .card-footer,
+.dashboard-sidebar, .dashboard-topbar, .dashboard-content,
+.public-navbar, .public-footer,
+.form-control, .form-select, .table, .table td, .table th {
+    transition: background-color var(--transition-theme),
+                border-color var(--transition-theme),
+                color var(--transition-theme),
+                box-shadow var(--transition-theme);
 }
 
 /* Headings */

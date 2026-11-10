@@ -18,6 +18,9 @@
     </div>
 
     <div class="topbar-right">
+        <!-- Light / Dark Mode Toggle Switch -->
+        <jsp:include page="/WEB-INF/views/common/theme-toggle.jsp" />
+
         <!-- Notification Indicator (UI shell only) -->
         <button type="button" class="btn btn-secondary btn-sm" title="Notifications" style="padding: 0.4rem;">
             <i data-lucide="bell"></i>

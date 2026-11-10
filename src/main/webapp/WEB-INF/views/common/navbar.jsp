@@ -24,6 +24,9 @@
 
         <!-- Action CTAs (Role-Aware) -->
         <div class="navbar-actions">
+            <!-- Light / Dark Mode Toggle Switch -->
+            <jsp:include page="/WEB-INF/views/common/theme-toggle.jsp" />
+
             <c:choose>
                 <c:when test="${not empty sessionScope.USER_PRINCIPAL}">
                     <a href="${ctx}${sessionScope.USER_PRINCIPAL.dashboardUrl}" class="btn btn-primary btn-sm">

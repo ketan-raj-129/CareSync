@@ -475,3 +475,184 @@
     background-color: var(--primary-soft);
 }
 
+/* ==========================================================================
+   CareSync Medico-Inspired Light/Dark Mode Switch
+   Pill Track, Sun Rays Animation, Dotted Middle Track, Tactile Concentric Thumb
+   ========================================================================== */
+.theme-switch-wrapper {
+    display: inline-flex;
+    align-items: center;
+}
+
+.theme-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 68px;
+    height: 36px;
+    padding: 0;
+    margin: 0;
+    border-radius: var(--radius-pill);
+    background: #ebeef2;
+    border: 1.5px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08), inset 0 1px 2px rgba(15, 23, 42, 0.06);
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.theme-switch:focus-visible {
+    box-shadow: 0 0 0 3px rgba(23, 110, 101, 0.3), inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Mode Track State */
+[data-theme="dark"] .theme-switch {
+    background: #18222d;
+    border-color: #273748;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Middle Dotted Track */
+.theme-switch-track {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.theme-switch-dot {
+    width: 4px;
+    height: 3px;
+    border-radius: 2px;
+    background: #cbd5e1;
+    transition: background-color 0.35s ease;
+}
+
+[data-theme="dark"] .theme-switch-dot {
+    background: #334658;
+}
+
+/* Left: Sun Icon & Rays */
+.theme-switch-sun {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+    transform: translateY(-50%) rotate(0deg) scale(1);
+    opacity: 1;
+    transition: transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+
+.theme-switch-sun svg {
+    width: 18px;
+    height: 18px;
+    color: #24282c;
+    stroke: currentColor;
+    fill: currentColor;
+}
+
+/* Right: Moon Icon */
+.theme-switch-moon {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+    transform: translateY(-50%) rotate(90deg) scale(0.3);
+    opacity: 0;
+    transition: transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+
+.theme-switch-moon svg {
+    width: 16px;
+    height: 16px;
+    color: #94a3b8;
+    fill: currentColor;
+}
+
+/* Sliding Thumb Knob with Inner Concentric Ring */
+.theme-switch-thumb {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #24282c;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.2);
+    z-index: 3;
+    pointer-events: none;
+    transform: translateX(32px); /* Resting on Right in Light Mode as pictured */
+    transition: transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.35s ease,
+                box-shadow 0.35s ease;
+}
+
+/* Concentric Inner Pupil Ring */
+.theme-switch-thumb::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #394047;
+    transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* Active Hover / Press Micro-interactions (Medico tactile physics) */
+.theme-switch:hover .theme-switch-thumb {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+}
+
+.theme-switch:active .theme-switch-thumb {
+    transform: translateX(32px) scaleX(1.1) scaleY(0.92);
+}
+
+/* When in Dark Mode: Knob slides to Left (0px), Sun rotates away, Moon rotates in */
+[data-theme="dark"] .theme-switch-thumb {
+    transform: translateX(0);
+    background: #1da89b;
+    box-shadow: 0 2px 10px rgba(29, 168, 155, 0.5), 0 0 12px rgba(29, 168, 155, 0.35);
+}
+
+[data-theme="dark"] .theme-switch-thumb::after {
+    background: #0d151c;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="dark"] .theme-switch:active .theme-switch-thumb {
+    transform: translateX(0) scaleX(1.1) scaleY(0.92);
+}
+
+[data-theme="dark"] .theme-switch-sun {
+    transform: translateY(-50%) rotate(-90deg) scale(0.3);
+    opacity: 0;
+}
+
+[data-theme="dark"] .theme-switch-moon {
+    transform: translateY(-50%) rotate(0deg) scale(1);
+    opacity: 1;
+}
+
+
