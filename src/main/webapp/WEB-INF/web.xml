@@ -200,6 +200,25 @@
     </servlet-mapping>
 
     <!-- ================================================================= -->
+    <!-- Static Resource Handling (Delegation to Tomcat DefaultServlet) -->
+    <!-- Extension mappings take strict precedence over '/' in Servlet Spec -->
+    <!-- ================================================================= -->
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.css</url-pattern>
+        <url-pattern>*.js</url-pattern>
+        <url-pattern>*.png</url-pattern>
+        <url-pattern>*.jpg</url-pattern>
+        <url-pattern>*.jpeg</url-pattern>
+        <url-pattern>*.gif</url-pattern>
+        <url-pattern>*.svg</url-pattern>
+        <url-pattern>*.ico</url-pattern>
+        <url-pattern>*.woff</url-pattern>
+        <url-pattern>*.woff2</url-pattern>
+        <url-pattern>*.ttf</url-pattern>
+    </servlet-mapping>
+
+    <!-- ================================================================= -->
     <!-- Home & Navigation Servlet -->
     <!-- ================================================================= -->
     <servlet>
