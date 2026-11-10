@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee 
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>CareSync</display-name>
+    <description>CareSync — Healthcare, connected. Online Healthcare Management System</description>
+
+    <!-- Context Configuration Parameters -->
+    <context-param>
+        <param-name>jakarta.servlet.jsp.jstl.fmt.localizationContext</param-name>
+        <param-value>messages</param-value>
+    </context-param>
+
+    <!-- Application Lifecycle Listener -->
+    <listener>
+        <listener-class>com.caresync.listener.AppContextListener</listener-class>
+    </listener>
+
+    <!-- 1. Character Encoding Filter (Forces UTF-8) -->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>com.caresync.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 2. Centralized Security Headers Filter -->
+    <filter>
+        <filter-name>SecurityHeadersFilter</filter-name>
+        <filter-class>com.caresync.filter.SecurityHeadersFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SecurityHeadersFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 3. CSRF Protection Filter -->
+    <filter>
+        <filter-name>CsrfFilter</filter-name>
+        <filter-class>com.caresync.filter.CsrfFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CsrfFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 4. Authentication Filter (Protects Portal Routes) -->
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>com.caresync.filter.AuthenticationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+        <url-pattern>/doctor/*</url-pattern>
+        <url-pattern>/patient/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 5. RBAC Authorization Filter (Enforces Role Separation) -->
+    <filter>
+        <filter-name>AuthorizationFilter</filter-name>
+        <filter-class>com.caresync.filter.AuthorizationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthorizationFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+        <url-pattern>/doctor/*</url-pattern>
+        <url-pattern>/patient/*</url-pattern>
+    </filter-mapping>
+
+    <!-- ================================================================= -->
+    <!-- Authentication Servlets -->
+    <!-- ================================================================= -->
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
+        <url-pattern>/register-patient</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
+    <!-- ================================================================= -->
+    <!-- Phase 4: Patient Portal & Booking Engine Servlets -->
+    <!-- ================================================================= -->
+    <servlet>
+        <servlet-name>PatientDashboardServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.PatientDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PatientDashboardServlet</servlet-name>
+        <url-pattern>/patient/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PatientProfileServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.PatientProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PatientProfileServlet</servlet-name>
+        <url-pattern>/patient/profile</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorDiscoveryServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorDiscoveryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorDiscoveryServlet</servlet-name>
+        <url-pattern>/patient/doctors</url-pattern>
+        <url-pattern>/doctors</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorDetailsServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorDetailsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorDetailsServlet</servlet-name>
+        <url-pattern>/patient/doctors/view</url-pattern>
+        <url-pattern>/doctors/view</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorAvailabilityServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorAvailabilityServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorAvailabilityServlet</servlet-name>
+        <url-pattern>/patient/availability</url-pattern>
+        <url-pattern>/api/availability</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AppointmentBookingServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AppointmentBookingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AppointmentBookingServlet</servlet-name>
+        <url-pattern>/patient/appointments/book</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PatientAppointmentServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.PatientAppointmentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PatientAppointmentServlet</servlet-name>
+        <url-pattern>/patient/appointments</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AppointmentDetailsServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AppointmentDetailsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AppointmentDetailsServlet</servlet-name>
+        <url-pattern>/patient/appointments/view</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AppointmentCancellationServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AppointmentCancellationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AppointmentCancellationServlet</servlet-name>
+        <url-pattern>/patient/appointments/cancel</url-pattern>
+    </servlet-mapping>
+
+    <!-- ================================================================= -->
+    <!-- Home & Navigation Servlet -->
+    <!-- ================================================================= -->
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.HomeServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+        <url-pattern>/home</url-pattern>
+        <url-pattern>/register-doctor</url-pattern>
+        <url-pattern>/admin/dashboard</url-pattern>
+        <url-pattern>/doctor/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <!-- Session Management Configuration -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <name>CARESYNC_SESSIONID</name>
+            <http-only>true</http-only>
+            <secure>false</secure>
+            <comment>CareSync Session Cookie</comment>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <!-- Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>home</welcome-file>
+    </welcome-file-list>
+
+    <!-- Custom Error Page Configuration -->
+    <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/views/common/403.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/common/404.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/common/500.jsp</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/WEB-INF/views/common/500.jsp</location>
+    </error-page>
+
+</web-app>

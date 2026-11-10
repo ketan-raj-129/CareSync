@@ -1,0 +1,29 @@
+# Build artifacts
+target/
+*.war
+*.jar
+*.class
+
+# Environment configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# IDE and Editor configurations
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
