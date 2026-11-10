@@ -3,8 +3,8 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
     <!-- Application JavaScript Bundles -->
-    <script src="${ctx}/assets/js/main.js?v=2.1"></script>
-    <script src="${ctx}/assets/js/components.js?v=2.1"></script>
+    <script src="${ctx}/assets/js/main.js?v=3.0"></script>
+    <script src="${ctx}/assets/js/components.js?v=3.0"></script>
     <script>
         // Ensure Lucide renders icons upon DOM load
         if (typeof lucide !== 'undefined') {

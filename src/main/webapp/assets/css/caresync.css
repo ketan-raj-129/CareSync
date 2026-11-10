@@ -3,10 +3,7 @@
  * Imports CSS Architecture layers and provides page-specific styles
  */
 
-@import url("variables.css");
-@import url("base.css");
-@import url("components.css");
-@import url("layout.css");
+/* Stylesheets are modularly linked in header.jsp with version control */
 
 /* ==========================================================================
    Public Landing Page Sections

@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
  * Manages light / dark state, persistence in localStorage, and tactile switch animations
  */
 window.toggleCareSyncTheme = function(btn) {
-    const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    const root = document.documentElement;
+    const currentTheme = root.getAttribute('data-theme') === 'dark' || root.classList.contains('dark-theme') ? 'dark' : 'light';
     const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
     applyTheme(nextTheme);
 };
@@ -49,7 +50,16 @@ function initThemeEngine() {
 }
 
 function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
+    const isDark = theme === 'dark';
+    const root = document.documentElement;
+    root.setAttribute('data-theme', theme);
+    root.classList.toggle('dark-theme', isDark);
+
+    if (document.body) {
+        document.body.setAttribute('data-theme', theme);
+        document.body.classList.toggle('dark-theme', isDark);
+    }
+
     try {
         localStorage.setItem('caresync_theme', theme);
     } catch (e) {
@@ -58,8 +68,8 @@ function applyTheme(theme) {
 
     const themeSwitches = document.querySelectorAll('.theme-switch');
     themeSwitches.forEach(btn => {
-        btn.setAttribute('aria-checked', theme === 'dark');
-        btn.setAttribute('title', theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+        btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+        btn.setAttribute('title', isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode');
     });
 
     // Dispatch event for any chart re-renders or custom components
