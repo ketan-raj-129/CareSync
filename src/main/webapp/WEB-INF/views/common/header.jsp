@@ -21,8 +21,12 @@
         })();
     </script>
 
-    <!-- CareSync Design System Stylesheets -->
-    <link rel="stylesheet" href="${ctx}/assets/css/caresync.css">
+    <!-- CareSync Design System Stylesheets (Bust cache directly) -->
+    <link rel="stylesheet" href="${ctx}/assets/css/variables.css?v=2.1">
+    <link rel="stylesheet" href="${ctx}/assets/css/base.css?v=2.1">
+    <link rel="stylesheet" href="${ctx}/assets/css/components.css?v=2.1">
+    <link rel="stylesheet" href="${ctx}/assets/css/layout.css?v=2.1">
+    <link rel="stylesheet" href="${ctx}/assets/css/caresync.css?v=2.1">
 
     <!-- Lucide Icons (Official SVG Icon Library) -->
     <script src="https://unpkg.com/lucide@latest"></script>

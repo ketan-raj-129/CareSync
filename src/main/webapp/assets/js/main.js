@@ -25,22 +25,18 @@ document.addEventListener('DOMContentLoaded', function () {
  * CareSync Medico-Inspired Theme Engine
  * Manages light / dark state, persistence in localStorage, and tactile switch animations
  */
+window.toggleCareSyncTheme = function(btn) {
+    const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(nextTheme);
+};
+
 function initThemeEngine() {
     const savedTheme = localStorage.getItem('caresync_theme');
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
 
     applyTheme(initialTheme);
-
-    const themeSwitches = document.querySelectorAll('.theme-switch');
-    themeSwitches.forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            applyTheme(targetTheme);
-        });
-    });
 
     // Listen for OS theme changes if user has not set an explicit override
     if (window.matchMedia) {
@@ -54,7 +50,11 @@ function initThemeEngine() {
 
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('caresync_theme', theme);
+    try {
+        localStorage.setItem('caresync_theme', theme);
+    } catch (e) {
+        console.warn("Could not save theme to localStorage:", e);
+    }
 
     const themeSwitches = document.querySelectorAll('.theme-switch');
     themeSwitches.forEach(btn => {
