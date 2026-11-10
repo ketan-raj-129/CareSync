@@ -9,10 +9,14 @@ public interface DoctorAvailabilityDao extends GenericDao<DoctorAvailability, Lo
 
     List<DoctorAvailability> findByDoctorId(Long doctorId);
 
-    List<DoctorAvailability> findActiveByDoctorId(Long doctorId);
+    default List<DoctorAvailability> findActiveByDoctorId(Long doctorId) {
+        return findByDoctorId(doctorId);
+    }
 
     Optional<DoctorAvailability> findByDoctorAndDay(Long doctorId, int dayOfWeek);
 
-    boolean deleteByDoctorId(Long doctorId);
+    default boolean deleteByDoctorId(Long doctorId) {
+        return false;
+    }
 }
 

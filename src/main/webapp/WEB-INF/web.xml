@@ -219,6 +219,83 @@
     </servlet-mapping>
 
     <!-- ================================================================= -->
+    <!-- Phase 5: Doctor Portal & Clinical Workflow Servlets -->
+    <!-- ================================================================= -->
+    <servlet>
+        <servlet-name>DoctorDashboardServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorDashboardServlet</servlet-name>
+        <url-pattern>/doctor/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorProfileServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorProfileServlet</servlet-name>
+        <url-pattern>/doctor/profile</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorAppointmentServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorAppointmentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorAppointmentServlet</servlet-name>
+        <url-pattern>/doctor/appointments</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorAppointmentDetailsServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorAppointmentDetailsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorAppointmentDetailsServlet</servlet-name>
+        <url-pattern>/doctor/appointments/view</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorAppointmentActionServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorAppointmentActionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorAppointmentActionServlet</servlet-name>
+        <url-pattern>/doctor/appointments/action</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorScheduleManagementServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorScheduleManagementServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorScheduleManagementServlet</servlet-name>
+        <url-pattern>/doctor/availability</url-pattern>
+        <url-pattern>/doctor/availability/manage</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorConsultationServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorConsultationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorConsultationServlet</servlet-name>
+        <url-pattern>/doctor/consultation</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorPrescriptionServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorPrescriptionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorPrescriptionServlet</servlet-name>
+        <url-pattern>/doctor/prescriptions</url-pattern>
+        <url-pattern>/doctor/prescriptions/view</url-pattern>
+    </servlet-mapping>
+
+    <!-- ================================================================= -->
     <!-- Home & Navigation Servlet -->
     <!-- ================================================================= -->
     <servlet>
@@ -232,7 +309,6 @@
         <url-pattern>/home</url-pattern>
         <url-pattern>/register-doctor</url-pattern>
         <url-pattern>/admin/dashboard</url-pattern>
-        <url-pattern>/doctor/dashboard</url-pattern>
     </servlet-mapping>
 
     <!-- Session Management Configuration -->

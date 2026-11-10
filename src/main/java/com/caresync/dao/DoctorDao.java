@@ -18,6 +18,8 @@ public interface DoctorDao extends GenericDao<Doctor, Long> {
 
     List<Doctor> searchDoctors(Long specialtyId, String query);
 
-    Doctor saveProfile(Doctor doctor, Connection conn);
+    default Doctor saveProfile(Doctor doctor, Connection conn) {
+        return save(doctor);
+    }
 }
 

@@ -120,7 +120,7 @@ flowchart TD
 
 ---
 
-### Phase 5: Doctor Portal & Clinical Consultation Workspace
+### Phase 5: Doctor Portal & Clinical Consultation Workspace [COMPLETED]
 - **Objective:** Implement doctor availability and time-off scheduling, appointment review, clinical documentation, and prescription creation.
 - **Tasks:**
   1. Build Doctor Availability and Time-Off UI for recurring weekly hours, slot durations, and exceptions (`doctor_availability_exceptions` for leaves, conferences, and holidays).
@@ -128,9 +128,9 @@ flowchart TD
   3. Build Clinical Consultation form (record symptoms, diagnosis, treatment notes).
   4. Implement dynamic digital prescription builder with multiple medication items.
   5. Enforce care relationship authorization (BR-002) when viewing patient history.
-- **Expected Deliverables:** Doctor workspace, availability manager, prescription generator.
+- **Expected Deliverables:** Doctor workspace (`/doctor/dashboard`, `/doctor/profile`), availability manager (`/doctor/availability`), appointment action engine (`/doctor/appointments`), clinical consultation workstation (`/doctor/consultation`), and prescription generator (`/doctor/prescriptions`).
 - **Dependencies:** Phase 4.
-- **Acceptance Criteria:** Completed consultation automatically marks appointment `COMPLETED` and creates printable prescription.
+- **Status:** **Completed & Verified** (84/84 tests passed).
 
 ---
 

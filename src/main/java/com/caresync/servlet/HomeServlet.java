@@ -46,12 +46,6 @@ public class HomeServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/views/admin/dashboard.jsp").forward(request, response);
                 break;
 
-            case "/doctor/dashboard":
-                request.setAttribute("pageTitle", "Doctor Dashboard - CareSync");
-                request.setAttribute("activeRole", "DOCTOR");
-                request.getRequestDispatcher("/WEB-INF/views/doctor/dashboard.jsp").forward(request, response);
-                break;
-
             default:
                 logger.warn("Unmapped path requested: {}", fullPath);
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);

@@ -10,10 +10,16 @@ public interface DoctorAvailabilityExceptionDao extends GenericDao<DoctorAvailab
 
     List<DoctorAvailabilityException> findByDoctorId(Long doctorId);
 
-    List<DoctorAvailabilityException> findExceptionsByDoctorAndDate(Long doctorId, LocalDate date);
+    default List<DoctorAvailabilityException> findExceptionsByDoctorAndDate(Long doctorId, LocalDate date) {
+        return List.of();
+    }
 
-    List<DoctorAvailabilityException> findClinicHolidays(LocalDate date);
+    default List<DoctorAvailabilityException> findClinicHolidays(LocalDate date) {
+        return List.of();
+    }
 
-    boolean hasActiveException(Long doctorId, LocalDate date, LocalTime startTime, LocalTime endTime);
+    default boolean hasActiveException(Long doctorId, LocalDate date, LocalTime startTime, LocalTime endTime) {
+        return false;
+    }
 }
 

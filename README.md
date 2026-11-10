@@ -7,7 +7,7 @@
 [![Tomcat](https://img.shields.io/badge/Apache%20Tomcat-10.1-yellow.svg)](https://tomcat.apache.org/)
 [![Database](https://img.shields.io/badge/PostgreSQL-Neon%20Cloud-336791.svg)](https://neon.tech/)
 [![Frontend](https://img.shields.io/badge/Bootstrap-5.3-7952B3.svg)](https://getbootstrap.com/)
-[![Status](https://img.shields.io/badge/Phase%204-Patient%20Portal%20Completed-10B981.svg)](#)
+[![Status](https://img.shields.io/badge/Phase%205-Doctor%20Portal%20Completed-10B981.svg)](#)
 
 CareSync is a modern, web-based healthcare management SaaS application designed for university-level advanced Java web development evaluation and real-world clinical operations. It connects patients, medical practitioners (doctors), and clinic administrators within a secure, high-performance digital environment.
 

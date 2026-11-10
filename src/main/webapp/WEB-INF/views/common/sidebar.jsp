@@ -78,43 +78,31 @@
             <c:when test="${activeRole == 'DOCTOR'}">
                 <li class="sidebar-section-title">Clinical Practice</li>
                 <li class="sidebar-item">
-                    <a href="${ctx}/doctor/dashboard" class="sidebar-link active">
+                    <a href="${ctx}/doctor/dashboard" class="sidebar-link ${activeMenu == 'dashboard' ? 'active' : ''}">
                         <i data-lucide="layout-dashboard"></i>
                         <span>Overview</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#profile" class="sidebar-link">
+                    <a href="${ctx}/doctor/profile" class="sidebar-link ${activeMenu == 'profile' ? 'active' : ''}">
                         <i data-lucide="user-round"></i>
                         <span>My Profile</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#availability" class="sidebar-link">
+                    <a href="${ctx}/doctor/availability" class="sidebar-link ${activeMenu == 'availability' ? 'active' : ''}">
                         <i data-lucide="clock"></i>
                         <span>Availability</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#appointments" class="sidebar-link">
+                    <a href="${ctx}/doctor/appointments" class="sidebar-link ${activeMenu == 'appointments' ? 'active' : ''}">
                         <i data-lucide="calendar"></i>
                         <span>Appointments</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#patients" class="sidebar-link">
-                        <i data-lucide="users"></i>
-                        <span>Patients</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#records" class="sidebar-link">
-                        <i data-lucide="file-text"></i>
-                        <span>Medical Records</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#prescriptions" class="sidebar-link">
+                    <a href="${ctx}/doctor/prescriptions" class="sidebar-link ${activeMenu == 'prescriptions' ? 'active' : ''}">
                         <i data-lucide="pill"></i>
                         <span>Prescriptions</span>
                     </a>

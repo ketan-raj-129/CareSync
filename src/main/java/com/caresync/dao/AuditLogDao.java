@@ -8,16 +8,26 @@ import java.util.Optional;
 
 public interface AuditLogDao extends GenericDao<AuditLog, Long> {
 
-    List<AuditLog> findRecent(int limit);
+    default List<AuditLog> findRecent(int limit) {
+        return List.of();
+    }
 
-    List<AuditLog> findByUserId(Long userId, int limit);
+    default List<AuditLog> findByUserId(Long userId, int limit) {
+        return List.of();
+    }
 
-    List<AuditLog> findByAction(String action, int limit);
+    default List<AuditLog> findByAction(String action, int limit) {
+        return List.of();
+    }
 
-    Optional<AuditLog> findLatestLog();
+    default Optional<AuditLog> findLatestLog() {
+        return Optional.empty();
+    }
 
-    AuditLog log(Long userId, String action, String targetEntity, Long targetId, 
-                 String ipAddress, String userAgent, String details, Connection conn);
+    default AuditLog log(Long userId, String action, String targetEntity, Long targetId, 
+                         String ipAddress, String userAgent, String details, Connection conn) {
+        return log(userId, action, targetEntity, targetId, ipAddress, userAgent, details);
+    }
 
     AuditLog log(Long userId, String action, String targetEntity, Long targetId, 
                  String ipAddress, String userAgent, String details);

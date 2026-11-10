@@ -172,6 +172,43 @@ public class AppointmentDaoImpl extends BaseDao<Appointment, Long> implements Ap
     }
 
     @Override
+    public List<Appointment> findWithDetailsByDoctorId(Long doctorId) {
+        String sql = SELECT_APPOINTMENT_DETAILS + "WHERE a.doctor_id = ? ORDER BY a.appointment_date DESC, a.start_time DESC";
+        List<Appointment> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, doctorId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToAppointmentWithDetails(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to find detailed appointments for doctor ID: " + doctorId, e.getSQLState(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Appointment> findWithDetailsByDoctorAndDate(Long doctorId, LocalDate date) {
+        String sql = SELECT_APPOINTMENT_DETAILS + "WHERE a.doctor_id = ? AND a.appointment_date = ? ORDER BY a.start_time ASC";
+        List<Appointment> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, doctorId);
+            stmt.setDate(2, java.sql.Date.valueOf(date));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToAppointmentWithDetails(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to find detailed appointments for doctor ID: " + doctorId + " on date: " + date, e.getSQLState(), e);
+        }
+        return list;
+    }
+
+    @Override
     public Optional<Appointment> findWithDetailsById(Long appointmentId) {
         if (appointmentId == null) return Optional.empty();
         String sql = SELECT_APPOINTMENT_DETAILS + "WHERE a.appointment_id = ?";
@@ -461,6 +498,59 @@ public class AppointmentDaoImpl extends BaseDao<Appointment, Long> implements Ap
             }
         } catch (SQLException e) {
             throw new DatabaseOperationException("Failed to count today's appointments", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long countByDoctorId(Long doctorId) {
+        String sql = "SELECT COUNT(*) FROM appointments WHERE doctor_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, doctorId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count appointments for doctor ID: " + doctorId, e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long countByDoctorAndStatus(Long doctorId, AppointmentStatus status) {
+        String sql = "SELECT COUNT(*) FROM appointments WHERE doctor_id = ? AND status = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, doctorId);
+            stmt.setString(2, status.name());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count appointments for doctor ID: " + doctorId + " and status: " + status, e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long countTodayByDoctorId(Long doctorId, LocalDate today) {
+        String sql = "SELECT COUNT(*) FROM appointments WHERE doctor_id = ? AND appointment_date = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, doctorId);
+            stmt.setDate(2, java.sql.Date.valueOf(today));
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count today appointments for doctor ID: " + doctorId, e.getSQLState(), e);
         }
         return 0L;
     }

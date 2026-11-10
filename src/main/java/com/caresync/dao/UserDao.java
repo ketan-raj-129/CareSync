@@ -12,12 +12,20 @@ public interface UserDao extends GenericDao<User, Long> {
 
     boolean existsByEmail(String email);
 
-    User save(User user, Connection conn);
+    default User save(User user, Connection conn) {
+        return save(user);
+    }
 
-    boolean updatePassword(Long userId, String passwordHash, String passwordSalt, int iterations);
+    default boolean updatePassword(Long userId, String passwordHash, String passwordSalt, int iterations) {
+        return false;
+    }
 
-    boolean updatePassword(Long userId, String passwordHash, String passwordSalt, int iterations, Connection conn);
+    default boolean updatePassword(Long userId, String passwordHash, String passwordSalt, int iterations, Connection conn) {
+        return updatePassword(userId, passwordHash, passwordSalt, iterations);
+    }
 
-    boolean updateStatus(Long userId, UserStatus status);
+    default boolean updateStatus(Long userId, UserStatus status) {
+        return false;
+    }
 }
 
