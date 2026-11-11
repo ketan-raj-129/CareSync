@@ -11,3 +11,4 @@ public interface AdminAuditLogService {
 
     Optional<AuditLog> getAuditLogById(Long logId);
 }
+

@@ -98,3 +98,4 @@ public class AdminSettingsServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/admin/settings");
     }
 }
+

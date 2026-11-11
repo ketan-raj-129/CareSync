@@ -16,3 +16,4 @@ public interface AdminDoctorService {
 
     boolean toggleDoctorAvailability(Long doctorId, boolean isAvailable, Long actorAdminId, String ipAddress, String userAgent);
 }
+

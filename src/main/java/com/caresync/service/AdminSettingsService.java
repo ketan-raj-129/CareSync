@@ -15,3 +15,4 @@ public interface AdminSettingsService {
 
     boolean isAllowedSetting(String key);
 }
+

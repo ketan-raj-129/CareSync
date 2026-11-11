@@ -18,3 +18,4 @@ public interface AdminAppointmentService {
     boolean cancelAppointment(Long appointmentId, String reason, Long actorAdminId,
                              String ipAddress, String userAgent);
 }
+

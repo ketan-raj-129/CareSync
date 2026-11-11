@@ -156,3 +156,4 @@ public class AdminHolidayServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/admin/holidays");
     }
 }
+

@@ -49,3 +49,4 @@ public class AdminDashboardServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/admin/dashboard.jsp").forward(request, response);
     }
 }
+

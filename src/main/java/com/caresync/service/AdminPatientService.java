@@ -14,3 +14,4 @@ public interface AdminPatientService {
 
     boolean updatePatientStatus(Long patientId, UserStatus newStatus, Long actorAdminId, String ipAddress, String userAgent);
 }
+

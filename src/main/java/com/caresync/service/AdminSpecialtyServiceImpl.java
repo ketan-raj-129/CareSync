@@ -161,3 +161,4 @@ public class AdminSpecialtyServiceImpl implements AdminSpecialtyService {
         return specialtyDao.countDoctorsBySpecialtyId(specialtyId);
     }
 }
+

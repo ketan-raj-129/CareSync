@@ -19,3 +19,4 @@ public interface AdminUserService {
     boolean updateUserRole(Long userId, Role newRole, Long actorAdminId,
                            String ipAddress, String userAgent);
 }
+

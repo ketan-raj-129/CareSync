@@ -62,3 +62,4 @@ public class PaginatedResult<T> implements Serializable {
         return (int) Math.min((long) page * pageSize, totalCount);
     }
 }
+

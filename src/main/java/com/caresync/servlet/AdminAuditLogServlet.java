@@ -83,3 +83,4 @@ public class AdminAuditLogServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/admin/audit-logs.jsp").forward(request, response);
     }
 }
+

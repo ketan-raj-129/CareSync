@@ -19,3 +19,4 @@ public interface AdminHolidayService {
 
     List<Appointment> getAffectedAppointments(LocalDate holidayDate);
 }
+

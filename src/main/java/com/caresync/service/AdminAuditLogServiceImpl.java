@@ -55,3 +55,4 @@ public class AdminAuditLogServiceImpl implements AdminAuditLogService {
         log.setDetails(details);
     }
 }
+

@@ -23,3 +23,4 @@ public interface AdminSpecialtyService {
 
     long getDoctorCountForSpecialty(Long specialtyId);
 }
+

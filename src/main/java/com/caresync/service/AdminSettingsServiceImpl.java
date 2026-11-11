@@ -91,3 +91,4 @@ public class AdminSettingsServiceImpl implements AdminSettingsService {
         return key != null && ALLOWED_KEYS.contains(key.trim());
     }
 }
+

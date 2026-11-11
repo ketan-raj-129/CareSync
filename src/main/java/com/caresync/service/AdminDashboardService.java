@@ -6,3 +6,4 @@ public interface AdminDashboardService {
 
     AdminDashboardDto getDashboardMetrics();
 }
+
