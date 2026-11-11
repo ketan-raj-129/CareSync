@@ -26,3 +26,4 @@ public interface ClinicalService {
     boolean recordConsultation(ConsultationRequestDto request, Long doctorId,
                               Long actorUserId, String ipAddress, String userAgent);
 }
+

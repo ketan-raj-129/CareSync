@@ -26,3 +26,4 @@ public interface DoctorAppointmentService {
     boolean cancelAppointmentByDoctor(Long appointmentId, Long doctorId, String reason,
                                      Long actorUserId, String ipAddress, String userAgent);
 }
+

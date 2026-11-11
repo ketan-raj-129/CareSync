@@ -23,3 +23,4 @@ public interface DoctorScheduleService {
     boolean deleteException(Long exceptionId, Long doctorId, Long actorUserId,
                             String ipAddress, String userAgent);
 }
+

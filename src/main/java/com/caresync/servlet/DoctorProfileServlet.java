@@ -141,3 +141,4 @@ public class DoctorProfileServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/doctor/profile");
     }
 }
+

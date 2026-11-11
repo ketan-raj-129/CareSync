@@ -70,3 +70,4 @@ public class DoctorDashboardServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/doctor/dashboard.jsp").forward(request, response);
     }
 }
+

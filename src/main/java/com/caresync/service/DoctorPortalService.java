@@ -20,3 +20,4 @@ public interface DoctorPortalService {
     boolean updateDoctorProfile(Long doctorId, Long userId, DoctorProfileUpdateDto dto,
                                 Long actorUserId, String ipAddress, String userAgent);
 }
+

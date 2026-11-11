@@ -192,3 +192,4 @@ public class DoctorScheduleManagementServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/doctor/availability");
     }
 }
+

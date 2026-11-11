@@ -95,3 +95,4 @@ public class DoctorDashboardDto {
         this.recentActivity = recentActivity != null ? recentActivity : new ArrayList<>();
     }
 }
+

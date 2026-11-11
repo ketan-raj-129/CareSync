@@ -208,3 +208,4 @@ public class DoctorConsultationServlet extends HttpServlet {
         }
     }
 }
+

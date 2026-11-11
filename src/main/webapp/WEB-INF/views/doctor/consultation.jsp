@@ -302,3 +302,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />
+

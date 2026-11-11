@@ -77,3 +77,4 @@ public class DoctorAppointmentServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/doctor/appointments.jsp").forward(request, response);
     }
 }
+

@@ -120,3 +120,4 @@ public class DoctorAppointmentDetailsServlet extends HttpServlet {
         }
     }
 }
+

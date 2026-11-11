@@ -75,3 +75,4 @@ public class ConsultationRequestDto {
         this.prescriptionItems = prescriptionItems != null ? prescriptionItems : new ArrayList<>();
     }
 }
+
