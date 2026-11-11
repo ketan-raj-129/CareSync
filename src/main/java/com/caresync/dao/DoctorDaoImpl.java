@@ -266,6 +266,152 @@ public class DoctorDaoImpl extends BaseDao<Doctor, Long> implements DoctorDao {
         }
     }
 
+    @Override
+    public boolean updateAvailability(Long doctorId, boolean available) {
+        String sql = "UPDATE doctor_profiles SET is_available = ?, updated_at = CURRENT_TIMESTAMP WHERE doctor_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, available);
+            stmt.setLong(2, doctorId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to update doctor availability: " + doctorId, e.getSQLState(), e);
+        }
+    }
+
+    @Override
+    public long countTotal() {
+        String sql = "SELECT COUNT(*) FROM doctor_profiles";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) return rs.getLong(1);
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count doctors", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long countActive() {
+        String sql = "SELECT COUNT(*) FROM doctor_profiles d JOIN users u ON d.user_id = u.user_id WHERE u.status = 'ACTIVE' AND d.is_available = TRUE";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) return rs.getLong(1);
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count active doctors", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long countBySpecialty(Long specialtyId) {
+        if (specialtyId == null) return 0L;
+        String sql = "SELECT COUNT(*) FROM doctor_profiles WHERE specialty_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, specialtyId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count doctors by specialty: " + specialtyId, e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public List<Doctor> findPaginated(String query, Long specialtyId, UserStatus status, Boolean available, int offset, int limit) {
+        StringBuilder sql = new StringBuilder(SELECT_DOCTOR_JOIN).append("WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (query != null && !query.trim().isEmpty()) {
+            sql.append("AND (LOWER(u.first_name) LIKE ? OR LOWER(u.last_name) LIKE ? OR LOWER(d.license_number) LIKE ? OR LOWER(u.email) LIKE ?) ");
+            String wild = "%" + query.trim().toLowerCase() + "%";
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+        }
+        if (specialtyId != null && specialtyId > 0) {
+            sql.append("AND d.specialty_id = ? ");
+            params.add(specialtyId);
+        }
+        if (status != null) {
+            sql.append("AND u.status = ? ");
+            params.add(status.name());
+        }
+        if (available != null) {
+            sql.append("AND d.is_available = ? ");
+            params.add(available);
+        }
+
+        sql.append("ORDER BY u.last_name ASC LIMIT ? OFFSET ?");
+        params.add(Math.max(1, limit));
+        params.add(Math.max(0, offset));
+
+        List<Doctor> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToDoctor(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to paginate doctors", e.getSQLState(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public long countFiltered(String query, Long specialtyId, UserStatus status, Boolean available) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT COUNT(*) FROM doctor_profiles d " +
+                "JOIN users u ON d.user_id = u.user_id " +
+                "JOIN specialties s ON d.specialty_id = s.specialty_id " +
+                "WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (query != null && !query.trim().isEmpty()) {
+            sql.append("AND (LOWER(u.first_name) LIKE ? OR LOWER(u.last_name) LIKE ? OR LOWER(d.license_number) LIKE ? OR LOWER(u.email) LIKE ?) ");
+            String wild = "%" + query.trim().toLowerCase() + "%";
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+        }
+        if (specialtyId != null && specialtyId > 0) {
+            sql.append("AND d.specialty_id = ? ");
+            params.add(specialtyId);
+        }
+        if (status != null) {
+            sql.append("AND u.status = ? ");
+            params.add(status.name());
+        }
+        if (available != null) {
+            sql.append("AND d.is_available = ? ");
+            params.add(available);
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count filtered doctors", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
     private Doctor mapResultSetToDoctor(ResultSet rs) throws SQLException {
         Doctor d = new Doctor();
         d.setDoctorProfileId(rs.getLong("doctor_id"));

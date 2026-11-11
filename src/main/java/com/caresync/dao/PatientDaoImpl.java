@@ -163,6 +163,109 @@ public class PatientDaoImpl extends BaseDao<Patient, Long> implements PatientDao
         }
     }
 
+    @Override
+    public long countTotal() {
+        String sql = "SELECT COUNT(*) FROM patient_profiles";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) return rs.getLong(1);
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count patients", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long countActive() {
+        String sql = "SELECT COUNT(*) FROM patient_profiles p JOIN users u ON p.user_id = u.user_id WHERE u.status = 'ACTIVE'";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) return rs.getLong(1);
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count active patients", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public List<Patient> findPaginated(String query, UserStatus status, int offset, int limit) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT p.patient_id, p.user_id, p.date_of_birth, p.gender, p.blood_group, p.address, " +
+                "p.emergency_contact_name, p.emergency_contact_phone, p.created_at, p.updated_at, " +
+                "u.email, u.first_name, u.last_name, u.phone_number, u.status, u.role " +
+                "FROM patient_profiles p " +
+                "JOIN users u ON p.user_id = u.user_id " +
+                "WHERE 1=1 ");
+
+        List<Object> params = new ArrayList<>();
+        if (query != null && !query.trim().isEmpty()) {
+            sql.append("AND (LOWER(u.first_name) LIKE ? OR LOWER(u.last_name) LIKE ? OR LOWER(u.email) LIKE ? OR u.phone_number LIKE ?) ");
+            String wild = "%" + query.trim().toLowerCase() + "%";
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+        }
+        if (status != null) {
+            sql.append("AND u.status = ? ");
+            params.add(status.name());
+        }
+
+        sql.append("ORDER BY u.created_at DESC LIMIT ? OFFSET ?");
+        params.add(Math.max(1, limit));
+        params.add(Math.max(0, offset));
+
+        List<Patient> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToPatient(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to paginate patients", e.getSQLState(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public long countFiltered(String query, UserStatus status) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT COUNT(*) FROM patient_profiles p JOIN users u ON p.user_id = u.user_id WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+        if (query != null && !query.trim().isEmpty()) {
+            sql.append("AND (LOWER(u.first_name) LIKE ? OR LOWER(u.last_name) LIKE ? OR LOWER(u.email) LIKE ? OR u.phone_number LIKE ?) ");
+            String wild = "%" + query.trim().toLowerCase() + "%";
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+        }
+        if (status != null) {
+            sql.append("AND u.status = ? ");
+            params.add(status.name());
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count filtered patients", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
     private Patient mapResultSetToPatient(ResultSet rs) throws SQLException {
         Patient p = new Patient();
         p.setPatientProfileId(rs.getLong("patient_id"));

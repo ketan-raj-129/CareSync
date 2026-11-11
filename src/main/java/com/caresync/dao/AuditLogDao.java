@@ -31,5 +31,13 @@ public interface AuditLogDao extends GenericDao<AuditLog, Long> {
 
     AuditLog log(Long userId, String action, String targetEntity, Long targetId, 
                  String ipAddress, String userAgent, String details);
+
+    default List<AuditLog> findPaginated(String action, Long userId, String targetEntity, int offset, int limit) {
+        return List.of();
+    }
+
+    default long countFiltered(String action, Long userId, String targetEntity) {
+        return 0L;
+    }
 }
 

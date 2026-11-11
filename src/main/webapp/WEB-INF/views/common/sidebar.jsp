@@ -23,51 +23,57 @@
             <c:when test="${activeRole == 'ADMIN'}">
                 <li class="sidebar-section-title">Administration</li>
                 <li class="sidebar-item">
-                    <a href="${ctx}/admin/dashboard" class="sidebar-link active">
+                    <a href="${ctx}/admin/dashboard" class="sidebar-link ${activeMenu == 'dashboard' ? 'active' : ''}">
                         <i data-lucide="layout-dashboard"></i>
                         <span>Overview</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#users" class="sidebar-link">
+                    <a href="${ctx}/admin/users" class="sidebar-link ${activeMenu == 'users' ? 'active' : ''}">
                         <i data-lucide="users"></i>
                         <span>Users</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#doctors" class="sidebar-link">
+                    <a href="${ctx}/admin/doctors" class="sidebar-link ${activeMenu == 'doctors' ? 'active' : ''}">
                         <i data-lucide="user-check"></i>
                         <span>Doctors</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#patients" class="sidebar-link">
+                    <a href="${ctx}/admin/patients" class="sidebar-link ${activeMenu == 'patients' ? 'active' : ''}">
                         <i data-lucide="heart-pulse"></i>
                         <span>Patients</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#appointments" class="sidebar-link">
+                    <a href="${ctx}/admin/appointments" class="sidebar-link ${activeMenu == 'appointments' ? 'active' : ''}">
                         <i data-lucide="calendar"></i>
                         <span>Appointments</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#specialties" class="sidebar-link">
+                    <a href="${ctx}/admin/specialties" class="sidebar-link ${activeMenu == 'specialties' ? 'active' : ''}">
                         <i data-lucide="award"></i>
                         <span>Specialties</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="${ctx}/admin/holidays" class="sidebar-link ${activeMenu == 'holidays' ? 'active' : ''}">
+                        <i data-lucide="calendar-off"></i>
+                        <span>Clinic Holidays</span>
                     </a>
                 </li>
 
                 <li class="sidebar-section-title">System Governance</li>
                 <li class="sidebar-item">
-                    <a href="#settings" class="sidebar-link">
+                    <a href="${ctx}/admin/settings" class="sidebar-link ${activeMenu == 'settings' ? 'active' : ''}">
                         <i data-lucide="sliders"></i>
                         <span>Settings</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#audit-logs" class="sidebar-link">
+                    <a href="${ctx}/admin/audit-logs" class="sidebar-link ${activeMenu == 'audit-logs' ? 'active' : ''}">
                         <i data-lucide="shield-check"></i>
                         <span>Audit Logs</span>
                     </a>

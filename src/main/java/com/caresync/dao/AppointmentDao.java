@@ -84,4 +84,18 @@ public interface AppointmentDao extends GenericDao<Appointment, Long> {
     default long countTodayByDoctorId(Long doctorId, LocalDate today) {
         return 0L;
     }
+
+    default List<Appointment> findPaginated(String reference, Long doctorId, Long patientId, Long specialtyId,
+                                            AppointmentStatus status, LocalDate date, int offset, int limit) {
+        return List.of();
+    }
+
+    default long countFiltered(String reference, Long doctorId, Long patientId, Long specialtyId,
+                               AppointmentStatus status, LocalDate date) {
+        return 0L;
+    }
+
+    default List<Appointment> findByDate(LocalDate date) {
+        return List.of();
+    }
 }

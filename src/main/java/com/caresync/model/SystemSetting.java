@@ -29,16 +29,32 @@ public class SystemSetting implements Serializable {
         return settingKey;
     }
 
+    public String getKey() {
+        return settingKey;
+    }
+
     public void setSettingKey(String settingKey) {
         this.settingKey = settingKey;
+    }
+
+    public void setKey(String key) {
+        this.settingKey = key;
     }
 
     public String getSettingValue() {
         return settingValue;
     }
 
+    public String getValue() {
+        return settingValue;
+    }
+
     public void setSettingValue(String settingValue) {
         this.settingValue = settingValue;
+    }
+
+    public void setValue(String value) {
+        this.settingValue = value;
     }
 
     public String getDescription() {

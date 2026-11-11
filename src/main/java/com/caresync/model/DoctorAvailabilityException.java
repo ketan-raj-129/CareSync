@@ -25,6 +25,14 @@ public class DoctorAvailabilityException extends BaseModel {
         super(id);
     }
 
+    public Long getExceptionId() {
+        return getId();
+    }
+
+    public void setExceptionId(Long exceptionId) {
+        setId(exceptionId);
+    }
+
     public Long getDoctorId() {
         return doctorId;
     }

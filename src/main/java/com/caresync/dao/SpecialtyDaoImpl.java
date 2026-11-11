@@ -148,6 +148,114 @@ public class SpecialtyDaoImpl extends BaseDao<Specialty, Long> implements Specia
         }
     }
 
+    @Override
+    public long countTotal() {
+        String sql = "SELECT COUNT(*) FROM specialties";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) return rs.getLong(1);
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count specialties", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long countActive() {
+        String sql = "SELECT COUNT(*) FROM specialties WHERE is_active = TRUE";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) return rs.getLong(1);
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count active specialties", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long countDoctorsBySpecialtyId(Long specialtyId) {
+        if (specialtyId == null) return 0L;
+        String sql = "SELECT COUNT(*) FROM doctor_profiles WHERE specialty_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, specialtyId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count doctors for specialty: " + specialtyId, e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public List<Specialty> findPaginated(String query, Boolean activeOnly, int offset, int limit) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT specialty_id, name, description, icon_name, is_active, created_at " +
+                "FROM specialties WHERE 1=1 ");
+
+        List<Object> params = new ArrayList<>();
+        if (query != null && !query.trim().isEmpty()) {
+            sql.append("AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?) ");
+            String wild = "%" + query.trim().toLowerCase() + "%";
+            params.add(wild);
+            params.add(wild);
+        }
+        if (Boolean.TRUE.equals(activeOnly)) {
+            sql.append("AND is_active = TRUE ");
+        }
+
+        sql.append("ORDER BY name ASC LIMIT ? OFFSET ?");
+        params.add(Math.max(1, limit));
+        params.add(Math.max(0, offset));
+
+        List<Specialty> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToSpecialty(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to paginate specialties", e.getSQLState(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public long countFiltered(String query, Boolean activeOnly) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM specialties WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+        if (query != null && !query.trim().isEmpty()) {
+            sql.append("AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?) ");
+            String wild = "%" + query.trim().toLowerCase() + "%";
+            params.add(wild);
+            params.add(wild);
+        }
+        if (Boolean.TRUE.equals(activeOnly)) {
+            sql.append("AND is_active = TRUE ");
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count filtered specialties", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
     private Specialty mapResultSetToSpecialty(ResultSet rs) throws SQLException {
         Specialty s = new Specialty();
         s.setId(rs.getLong("specialty_id"));

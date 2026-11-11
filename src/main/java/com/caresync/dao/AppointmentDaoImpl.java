@@ -555,6 +555,126 @@ public class AppointmentDaoImpl extends BaseDao<Appointment, Long> implements Ap
         return 0L;
     }
 
+    @Override
+    public List<Appointment> findPaginated(String reference, Long doctorId, Long patientId, Long specialtyId,
+                                            AppointmentStatus status, LocalDate date, int offset, int limit) {
+        StringBuilder sql = new StringBuilder(SELECT_APPOINTMENT_DETAILS).append("WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (reference != null && !reference.trim().isEmpty()) {
+            sql.append("AND LOWER(a.appointment_reference) LIKE ? ");
+            params.add("%" + reference.trim().toLowerCase() + "%");
+        }
+        if (doctorId != null && doctorId > 0) {
+            sql.append("AND a.doctor_id = ? ");
+            params.add(doctorId);
+        }
+        if (patientId != null && patientId > 0) {
+            sql.append("AND a.patient_id = ? ");
+            params.add(patientId);
+        }
+        if (specialtyId != null && specialtyId > 0) {
+            sql.append("AND d.specialty_id = ? ");
+            params.add(specialtyId);
+        }
+        if (status != null) {
+            sql.append("AND a.status = ? ");
+            params.add(status.name());
+        }
+        if (date != null) {
+            sql.append("AND a.appointment_date = ? ");
+            params.add(date);
+        }
+
+        sql.append("ORDER BY a.appointment_date DESC, a.start_time DESC LIMIT ? OFFSET ?");
+        params.add(Math.max(1, limit));
+        params.add(Math.max(0, offset));
+
+        List<Appointment> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToAppointmentWithDetails(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to paginate appointments", e.getSQLState(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public long countFiltered(String reference, Long doctorId, Long patientId, Long specialtyId,
+                               AppointmentStatus status, LocalDate date) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT COUNT(*) FROM appointments a " +
+                "JOIN doctor_profiles d ON a.doctor_id = d.doctor_id " +
+                "JOIN patient_profiles p ON a.patient_id = p.patient_id " +
+                "WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (reference != null && !reference.trim().isEmpty()) {
+            sql.append("AND LOWER(a.appointment_reference) LIKE ? ");
+            params.add("%" + reference.trim().toLowerCase() + "%");
+        }
+        if (doctorId != null && doctorId > 0) {
+            sql.append("AND a.doctor_id = ? ");
+            params.add(doctorId);
+        }
+        if (patientId != null && patientId > 0) {
+            sql.append("AND a.patient_id = ? ");
+            params.add(patientId);
+        }
+        if (specialtyId != null && specialtyId > 0) {
+            sql.append("AND d.specialty_id = ? ");
+            params.add(specialtyId);
+        }
+        if (status != null) {
+            sql.append("AND a.status = ? ");
+            params.add(status.name());
+        }
+        if (date != null) {
+            sql.append("AND a.appointment_date = ? ");
+            params.add(date);
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count filtered appointments", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public List<Appointment> findByDate(LocalDate date) {
+        if (date == null) return List.of();
+        String sql = SELECT_APPOINTMENT_DETAILS + "WHERE a.appointment_date = ? ORDER BY a.start_time ASC";
+        List<Appointment> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            setDateOrNull(stmt, 1, date);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToAppointmentWithDetails(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to find appointments for date: " + date, e.getSQLState(), e);
+        }
+        return list;
+    }
+
     private Appointment mapResultSetToAppointment(ResultSet rs) throws SQLException {
         Appointment apt = new Appointment();
         apt.setId(rs.getLong("appointment_id"));

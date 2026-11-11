@@ -106,6 +106,39 @@ public class DoctorAvailabilityExceptionDaoImpl extends BaseDao<DoctorAvailabili
     }
 
     @Override
+    public List<DoctorAvailabilityException> findAllClinicHolidays() {
+        String sql = "SELECT exception_id, doctor_id, exception_date, is_full_day, start_time, end_time, " +
+                     "exception_type, reason, created_at " +
+                     "FROM doctor_availability_exceptions " +
+                     "WHERE doctor_id IS NULL ORDER BY exception_date ASC";
+
+        List<DoctorAvailabilityException> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapResultSetToException(rs));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to retrieve all clinic holidays", e.getSQLState(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public long countClinicHolidays() {
+        String sql = "SELECT COUNT(*) FROM doctor_availability_exceptions WHERE doctor_id IS NULL";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) return rs.getLong(1);
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count clinic holidays", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
     public boolean hasActiveException(Long doctorId, LocalDate date, LocalTime startTime, LocalTime endTime) {
         String sql = "SELECT 1 FROM doctor_availability_exceptions " +
                      "WHERE (doctor_id = ? OR doctor_id IS NULL) AND exception_date = ? AND (" +

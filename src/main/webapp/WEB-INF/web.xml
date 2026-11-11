@@ -296,6 +296,104 @@
     </servlet-mapping>
 
     <!-- ================================================================= -->
+    <!-- Admin Portal Servlets (Phase 6) -->
+    <!-- ================================================================= -->
+    <servlet>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AdminDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <url-pattern>/admin/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminPatientServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AdminPatientServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminPatientServlet</servlet-name>
+        <url-pattern>/admin/patients</url-pattern>
+        <url-pattern>/admin/patients/view</url-pattern>
+        <url-pattern>/admin/patients/status</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminDoctorServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AdminDoctorServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminDoctorServlet</servlet-name>
+        <url-pattern>/admin/doctors</url-pattern>
+        <url-pattern>/admin/doctors/view</url-pattern>
+        <url-pattern>/admin/doctors/verification</url-pattern>
+        <url-pattern>/admin/doctors/status</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminSpecialtyServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AdminSpecialtyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminSpecialtyServlet</servlet-name>
+        <url-pattern>/admin/specialties</url-pattern>
+        <url-pattern>/admin/specialties/create</url-pattern>
+        <url-pattern>/admin/specialties/edit</url-pattern>
+        <url-pattern>/admin/specialties/toggle</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminAppointmentServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AdminAppointmentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminAppointmentServlet</servlet-name>
+        <url-pattern>/admin/appointments</url-pattern>
+        <url-pattern>/admin/appointments/view</url-pattern>
+        <url-pattern>/admin/appointments/action</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminHolidayServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AdminHolidayServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminHolidayServlet</servlet-name>
+        <url-pattern>/admin/holidays</url-pattern>
+        <url-pattern>/admin/holidays/manage</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminUserServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AdminUserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminUserServlet</servlet-name>
+        <url-pattern>/admin/users</url-pattern>
+        <url-pattern>/admin/users/view</url-pattern>
+        <url-pattern>/admin/users/status</url-pattern>
+        <url-pattern>/admin/users/role</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminSettingsServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AdminSettingsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminSettingsServlet</servlet-name>
+        <url-pattern>/admin/settings</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminAuditLogServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AdminAuditLogServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminAuditLogServlet</servlet-name>
+        <url-pattern>/admin/audit-logs</url-pattern>
+    </servlet-mapping>
+
+    <!-- ================================================================= -->
     <!-- Home & Navigation Servlet -->
     <!-- ================================================================= -->
     <servlet>
@@ -308,7 +406,6 @@
         <url-pattern>/</url-pattern>
         <url-pattern>/home</url-pattern>
         <url-pattern>/register-doctor</url-pattern>
-        <url-pattern>/admin/dashboard</url-pattern>
     </servlet-mapping>
 
     <!-- Session Management Configuration -->

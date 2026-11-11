@@ -25,6 +25,14 @@ public class User extends BaseModel {
         super(id);
     }
 
+    public Long getUserId() {
+        return getId();
+    }
+
+    public void setUserId(Long userId) {
+        setId(userId);
+    }
+
     public String getEmail() {
         return email;
     }

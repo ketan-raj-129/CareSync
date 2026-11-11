@@ -26,6 +26,14 @@ public class Specialty extends BaseModel {
         this.active = true;
     }
 
+    public Long getSpecialtyId() {
+        return getId();
+    }
+
+    public void setSpecialtyId(Long specialtyId) {
+        setId(specialtyId);
+    }
+
     public String getName() {
         return name;
     }

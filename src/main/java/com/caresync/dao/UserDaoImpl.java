@@ -196,6 +196,160 @@ public class UserDaoImpl extends BaseDao<User, Long> implements UserDao {
     }
 
     @Override
+    public boolean updateRole(Long userId, Role role) {
+        String sql = "UPDATE users SET role = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, role.name());
+            stmt.setLong(2, userId);
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to update role for user: " + userId, e.getSQLState(), e);
+        }
+    }
+
+    @Override
+    public long countTotal() {
+        String sql = "SELECT COUNT(*) FROM users";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) return rs.getLong(1);
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count users", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long countByRole(Role role) {
+        if (role == null) return 0L;
+        String sql = "SELECT COUNT(*) FROM users WHERE role = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, role.name());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count users by role: " + role, e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long countByStatus(UserStatus status) {
+        if (status == null) return 0L;
+        String sql = "SELECT COUNT(*) FROM users WHERE status = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, status.name());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count users by status: " + status, e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long countActiveAdmins() {
+        String sql = "SELECT COUNT(*) FROM users WHERE role = 'ADMIN' AND status = 'ACTIVE'";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) return rs.getLong(1);
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count active administrators", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public List<User> findPaginated(String query, Role role, UserStatus status, int offset, int limit) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT user_id, email, password_hash, password_salt, hash_iterations, role, status, " +
+                "first_name, last_name, phone_number, created_at, updated_at " +
+                "FROM users WHERE 1=1 ");
+
+        List<Object> params = new ArrayList<>();
+        if (query != null && !query.trim().isEmpty()) {
+            sql.append("AND (LOWER(first_name) LIKE ? OR LOWER(last_name) LIKE ? OR LOWER(email) LIKE ? OR phone_number LIKE ?) ");
+            String wild = "%" + query.trim().toLowerCase() + "%";
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+        }
+        if (role != null) {
+            sql.append("AND role = ? ");
+            params.add(role.name());
+        }
+        if (status != null) {
+            sql.append("AND status = ? ");
+            params.add(status.name());
+        }
+
+        sql.append("ORDER BY created_at DESC LIMIT ? OFFSET ?");
+        params.add(Math.max(1, limit));
+        params.add(Math.max(0, offset));
+
+        List<User> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToUser(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to paginate users", e.getSQLState(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public long countFiltered(String query, Role role, UserStatus status) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+        if (query != null && !query.trim().isEmpty()) {
+            sql.append("AND (LOWER(first_name) LIKE ? OR LOWER(last_name) LIKE ? OR LOWER(email) LIKE ? OR phone_number LIKE ?) ");
+            String wild = "%" + query.trim().toLowerCase() + "%";
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+            params.add(wild);
+        }
+        if (role != null) {
+            sql.append("AND role = ? ");
+            params.add(role.name());
+        }
+        if (status != null) {
+            sql.append("AND status = ? ");
+            params.add(status.name());
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count filtered users", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
     public boolean deleteById(Long id) {
         // Enforce soft deletion per business rules
         return updateStatus(id, UserStatus.INACTIVE);

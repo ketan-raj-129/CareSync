@@ -120,6 +120,77 @@ public class AuditLogDaoImpl extends BaseDao<AuditLog, Long> implements AuditLog
     }
 
     @Override
+    public List<AuditLog> findPaginated(String action, Long userId, String targetEntity, int offset, int limit) {
+        StringBuilder sql = new StringBuilder(SELECT_BASE).append("WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (action != null && !action.trim().isEmpty()) {
+            sql.append("AND action = ? ");
+            params.add(action.trim());
+        }
+        if (userId != null && userId > 0) {
+            sql.append("AND user_id = ? ");
+            params.add(userId);
+        }
+        if (targetEntity != null && !targetEntity.trim().isEmpty()) {
+            sql.append("AND target_entity = ? ");
+            params.add(targetEntity.trim());
+        }
+
+        sql.append("ORDER BY created_at DESC, log_id DESC LIMIT ? OFFSET ?");
+        params.add(Math.max(1, limit));
+        params.add(Math.max(0, offset));
+
+        List<AuditLog> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToAuditLog(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to paginate audit logs", e.getSQLState(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public long countFiltered(String action, Long userId, String targetEntity) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM audit_logs WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (action != null && !action.trim().isEmpty()) {
+            sql.append("AND action = ? ");
+            params.add(action.trim());
+        }
+        if (userId != null && userId > 0) {
+            sql.append("AND user_id = ? ");
+            params.add(userId);
+        }
+        if (targetEntity != null && !targetEntity.trim().isEmpty()) {
+            sql.append("AND target_entity = ? ");
+            params.add(targetEntity.trim());
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count filtered audit logs", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
     public AuditLog log(Long userId, String action, String targetEntity, Long targetId,
                         String ipAddress, String userAgent, String details) {
         try (Connection conn = getConnection()) {
