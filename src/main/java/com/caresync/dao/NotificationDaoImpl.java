@@ -206,6 +206,114 @@ public class NotificationDaoImpl extends BaseDao<Notification, Long> implements 
         }
     }
 
+    @Override
+    public List<Notification> findPaginatedByUserId(Long userId, int offset, int limit) {
+        String sql = SELECT_BASE + "WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        List<Notification> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, userId);
+            stmt.setInt(2, Math.max(1, limit));
+            stmt.setInt(3, Math.max(0, offset));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToNotification(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to find paginated notifications for user ID: " + userId, e.getSQLState(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public long countByUserId(Long userId) {
+        String sql = "SELECT COUNT(*) FROM notifications WHERE user_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count notifications for user ID: " + userId, e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public List<Notification> findPaginatedAll(String query, String type, int offset, int limit) {
+        StringBuilder sql = new StringBuilder(SELECT_BASE).append("WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (query != null && !query.trim().isEmpty()) {
+            sql.append("AND (LOWER(title) LIKE ? OR LOWER(message) LIKE ?) ");
+            String q = "%" + query.trim().toLowerCase() + "%";
+            params.add(q);
+            params.add(q);
+        }
+
+        if (type != null && !type.trim().isEmpty()) {
+            sql.append("AND notification_type = ? ");
+            params.add(type.trim());
+        }
+
+        sql.append("ORDER BY created_at DESC LIMIT ? OFFSET ?");
+        params.add(Math.max(1, limit));
+        params.add(Math.max(0, offset));
+
+        List<Notification> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToNotification(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to query notifications list", e.getSQLState(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public long countFilteredAll(String query, String type) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM notifications WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (query != null && !query.trim().isEmpty()) {
+            sql.append("AND (LOWER(title) LIKE ? OR LOWER(message) LIKE ?) ");
+            String q = "%" + query.trim().toLowerCase() + "%";
+            params.add(q);
+            params.add(q);
+        }
+
+        if (type != null && !type.trim().isEmpty()) {
+            sql.append("AND notification_type = ? ");
+            params.add(type.trim());
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to count notifications", e.getSQLState(), e);
+        }
+        return 0L;
+    }
+
     private Notification mapResultSetToNotification(ResultSet rs) throws SQLException {
         Notification note = new Notification();
         note.setId(rs.getLong("notification_id"));

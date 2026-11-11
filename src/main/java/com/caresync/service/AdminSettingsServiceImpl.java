@@ -26,7 +26,8 @@ public class AdminSettingsServiceImpl implements AdminSettingsService {
             "clinic.working_hours",
             "clinic.default_timezone",
             "appointment.slot_duration_default",
-            "appointment.cancellation_cutoff_hours"
+            "appointment.cancellation_cutoff_hours",
+            "appointment.reminder.lead.hours"
     );
 
     private final SystemSettingDao settingDao;

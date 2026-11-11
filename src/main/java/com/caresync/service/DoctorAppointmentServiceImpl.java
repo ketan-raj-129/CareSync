@@ -4,10 +4,16 @@ import com.caresync.dao.AppointmentDao;
 import com.caresync.dao.AppointmentDaoImpl;
 import com.caresync.dao.AuditLogDao;
 import com.caresync.dao.AuditLogDaoImpl;
+import com.caresync.dao.DoctorDao;
+import com.caresync.dao.DoctorDaoImpl;
+import com.caresync.dao.PatientDao;
+import com.caresync.dao.PatientDaoImpl;
 import com.caresync.exception.ResourceNotFoundException;
 import com.caresync.exception.ValidationException;
 import com.caresync.model.Appointment;
 import com.caresync.model.AppointmentStatus;
+import com.caresync.model.Doctor;
+import com.caresync.model.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,14 +31,38 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
 
     private final AppointmentDao appointmentDao;
     private final AuditLogDao auditLogDao;
+    private PatientDao patientDao;
+    private DoctorDao doctorDao;
+    private NotificationEventService notificationEventService;
 
     public DoctorAppointmentServiceImpl() {
-        this(new AppointmentDaoImpl(), new AuditLogDaoImpl());
+        this(new AppointmentDaoImpl(), new AuditLogDaoImpl(), new PatientDaoImpl(), new DoctorDaoImpl(), null);
     }
 
     public DoctorAppointmentServiceImpl(AppointmentDao appointmentDao, AuditLogDao auditLogDao) {
+        this(appointmentDao, auditLogDao, new PatientDaoImpl(), new DoctorDaoImpl(), null);
+    }
+
+    public DoctorAppointmentServiceImpl(AppointmentDao appointmentDao, AuditLogDao auditLogDao,
+                                        PatientDao patientDao, DoctorDao doctorDao,
+                                        NotificationEventService notificationEventService) {
         this.appointmentDao = Objects.requireNonNull(appointmentDao, "appointmentDao cannot be null");
         this.auditLogDao = Objects.requireNonNull(auditLogDao, "auditLogDao cannot be null");
+        this.patientDao = patientDao;
+        this.doctorDao = doctorDao;
+        this.notificationEventService = notificationEventService;
+    }
+
+    public void setNotificationEventService(NotificationEventService notificationEventService) {
+        this.notificationEventService = notificationEventService;
+    }
+
+    public void setPatientDao(PatientDao patientDao) {
+        this.patientDao = patientDao;
+    }
+
+    public void setDoctorDao(DoctorDao doctorDao) {
+        this.doctorDao = doctorDao;
     }
 
     @Override
@@ -129,6 +159,15 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
             logger.info("Appointment ID {} confirmed by doctor ID {}", appointmentId, doctorId);
             auditLogDao.log(actorUserId, "APPOINTMENT_CONFIRMED", "appointments", appointmentId,
                     ipAddress, userAgent, "Doctor ID " + doctorId + " confirmed booking " + apt.getReferenceNumber());
+            if (notificationEventService != null) {
+                try {
+                    Patient pt = patientDao != null && apt.getPatientId() != null ? patientDao.findById(apt.getPatientId()).orElse(null) : apt.getPatient();
+                    Doctor doc = doctorDao != null ? doctorDao.findById(doctorId).orElse(null) : apt.getDoctor();
+                    notificationEventService.notifyAppointmentConfirmed(apt, pt, doc);
+                } catch (Exception ex) {
+                    logger.warn("Failed to dispatch appointment confirmed notification: {}", ex.getMessage());
+                }
+            }
         }
         return updated;
     }
@@ -151,6 +190,15 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
             logger.info("Appointment ID {} rejected by doctor ID {}", appointmentId, doctorId);
             auditLogDao.log(actorUserId, "APPOINTMENT_REJECTED", "appointments", appointmentId,
                     ipAddress, userAgent, "Doctor ID " + doctorId + " rejected booking " + apt.getReferenceNumber() + ": " + finalReason);
+            if (notificationEventService != null) {
+                try {
+                    Patient pt = patientDao != null && apt.getPatientId() != null ? patientDao.findById(apt.getPatientId()).orElse(null) : apt.getPatient();
+                    Doctor doc = doctorDao != null ? doctorDao.findById(doctorId).orElse(null) : apt.getDoctor();
+                    notificationEventService.notifyAppointmentRejected(apt, pt, doc, reason);
+                } catch (Exception ex) {
+                    logger.warn("Failed to dispatch appointment rejected notification: {}", ex.getMessage());
+                }
+            }
         }
         return updated;
     }
@@ -191,6 +239,15 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
             logger.info("Appointment ID {} cancelled by doctor ID {}", appointmentId, doctorId);
             auditLogDao.log(actorUserId, "APPOINTMENT_CANCELLED_BY_DOCTOR", "appointments", appointmentId,
                     ipAddress, userAgent, "Doctor ID " + doctorId + " cancelled booking " + apt.getReferenceNumber() + ": " + finalReason);
+            if (notificationEventService != null) {
+                try {
+                    Patient pt = patientDao != null && apt.getPatientId() != null ? patientDao.findById(apt.getPatientId()).orElse(null) : apt.getPatient();
+                    Doctor doc = doctorDao != null ? doctorDao.findById(doctorId).orElse(null) : apt.getDoctor();
+                    notificationEventService.notifyAppointmentCancelled(apt, pt, doc, "DOCTOR", finalReason);
+                } catch (Exception ex) {
+                    logger.warn("Failed to dispatch appointment cancelled by doctor notification: {}", ex.getMessage());
+                }
+            }
         }
         return updated;
     }

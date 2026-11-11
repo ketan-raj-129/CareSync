@@ -4,11 +4,17 @@ import com.caresync.dao.AppointmentDao;
 import com.caresync.dao.AppointmentDaoImpl;
 import com.caresync.dao.AuditLogDao;
 import com.caresync.dao.AuditLogDaoImpl;
+import com.caresync.dao.DoctorDao;
+import com.caresync.dao.DoctorDaoImpl;
+import com.caresync.dao.PatientDao;
+import com.caresync.dao.PatientDaoImpl;
 import com.caresync.dto.PaginatedResult;
 import com.caresync.exception.ResourceNotFoundException;
 import com.caresync.exception.ValidationException;
 import com.caresync.model.Appointment;
 import com.caresync.model.AppointmentStatus;
+import com.caresync.model.Doctor;
+import com.caresync.model.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,14 +29,38 @@ public class AdminAppointmentServiceImpl implements AdminAppointmentService {
 
     private final AppointmentDao appointmentDao;
     private final AuditLogDao auditLogDao;
+    private PatientDao patientDao;
+    private DoctorDao doctorDao;
+    private NotificationEventService notificationEventService;
 
     public AdminAppointmentServiceImpl() {
-        this(new AppointmentDaoImpl(), new AuditLogDaoImpl());
+        this(new AppointmentDaoImpl(), new AuditLogDaoImpl(), new PatientDaoImpl(), new DoctorDaoImpl(), null);
     }
 
     public AdminAppointmentServiceImpl(AppointmentDao appointmentDao, AuditLogDao auditLogDao) {
+        this(appointmentDao, auditLogDao, new PatientDaoImpl(), new DoctorDaoImpl(), null);
+    }
+
+    public AdminAppointmentServiceImpl(AppointmentDao appointmentDao, AuditLogDao auditLogDao,
+                                       PatientDao patientDao, DoctorDao doctorDao,
+                                       NotificationEventService notificationEventService) {
         this.appointmentDao = Objects.requireNonNull(appointmentDao, "appointmentDao cannot be null");
         this.auditLogDao = Objects.requireNonNull(auditLogDao, "auditLogDao cannot be null");
+        this.patientDao = patientDao;
+        this.doctorDao = doctorDao;
+        this.notificationEventService = notificationEventService;
+    }
+
+    public void setNotificationEventService(NotificationEventService notificationEventService) {
+        this.notificationEventService = notificationEventService;
+    }
+
+    public void setPatientDao(PatientDao patientDao) {
+        this.patientDao = patientDao;
+    }
+
+    public void setDoctorDao(DoctorDao doctorDao) {
+        this.doctorDao = doctorDao;
     }
 
     @Override
@@ -84,6 +114,15 @@ public class AdminAppointmentServiceImpl implements AdminAppointmentService {
                     actorAdminId, appointmentId, apt.getReferenceNumber(), finalReason);
             auditLogDao.log(actorAdminId, "APPOINTMENT_CANCELLED_BY_ADMIN", "appointments", appointmentId,
                     ipAddress, userAgent, "Cancelled booking " + apt.getReferenceNumber() + ": " + finalReason);
+            if (notificationEventService != null) {
+                try {
+                    Patient pt = patientDao != null && apt.getPatientId() != null ? patientDao.findById(apt.getPatientId()).orElse(null) : apt.getPatient();
+                    Doctor doc = doctorDao != null && apt.getDoctorId() != null ? doctorDao.findById(apt.getDoctorId()).orElse(null) : apt.getDoctor();
+                    notificationEventService.notifyAppointmentCancelled(apt, pt, doc, "ADMIN", finalReason);
+                } catch (Exception ex) {
+                    logger.warn("Failed to dispatch administrative appointment cancellation notification: {}", ex.getMessage());
+                }
+            }
         }
         return updated;
     }

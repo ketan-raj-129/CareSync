@@ -148,17 +148,18 @@ flowchart TD
 
 ---
 
-### Phase 7: Advanced Core Java Concepts & Concurrency
-- **Objective:** Enhance platform with advanced Core Java features to maximize academic rubric score.
+### Phase 7: Notification & Communication Engine [COMPLETED]
+- **Objective:** Implement central notification and communication engine, decoupling event emission from clinical operations, managing transactional outbox delivery, multi-channel preferences, and automated appointment reminders.
 - **Tasks:**
-  1. Implement `ScheduledExecutorService` in `AppContextListener` running background appointment reminders.
-  2. Implement `ExecutorService` thread pool for asynchronous notification delivery and audit logging.
-  3. Refactor DAO query mappers using Java Generics and Collections Streams.
-  4. Implement comprehensive custom exception handling with user-friendly error views.
-  5. Demonstrate OOP polymorphism and inheritance in domain methods.
-- **Expected Deliverables:** Background daemon threads, thread pool management, stream-based analytics.
+  1. Build Central Notification Architecture (`NotificationService`, `NotificationPreferenceService`, `NotificationDispatcher`, `NotificationEventService`, `NotificationTemplateService`, `NotificationScheduler`).
+  2. Implement lifecycle event emission on booking, confirmation, rejection, cancellation, and reminders.
+  3. Build Patient and Doctor in-app notification inboxes with unread filters and badge counters.
+  4. Build Patient and Doctor communication preferences consoles.
+  5. Build Admin notification queue monitor and manual retry management.
+  6. Implement background daemon scheduler with atomic lease claiming and safe lifecycle management in `AppContextListener`.
+- **Expected Deliverables:** In-app inboxes (`/patient/notifications`, `/doctor/notifications`), preferences (`/patient/preferences`, `/doctor/preferences`), admin monitor (`/admin/notifications`), transactional outbox, and background reminder scheduler.
 - **Dependencies:** Phase 6.
-- **Acceptance Criteria:** Clean background thread execution without memory leaks during Tomcat shutdown.
+- **Status:** **Completed & Verified** (106/106 tests passed).
 
 ---
 

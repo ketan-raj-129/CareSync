@@ -21,10 +21,16 @@
         <!-- Light / Dark Mode Toggle Switch -->
         <jsp:include page="/WEB-INF/views/common/theme-toggle.jsp" />
 
-        <!-- Notification Indicator (UI shell only) -->
-        <button type="button" class="btn btn-secondary btn-sm" title="Notifications" style="padding: 0.4rem;">
+        <!-- Notification Indicator -->
+        <a href="${ctx}/${activeRole == 'ADMIN' ? 'admin/notifications' : (activeRole == 'DOCTOR' ? 'doctor/notifications' : 'patient/notifications')}"
+           class="btn btn-secondary btn-sm position-relative" title="Notifications" style="padding: 0.4rem; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
             <i data-lucide="bell"></i>
-        </button>
+            <c:if test="${not empty unreadCount && unreadCount > 0}">
+                <span class="badge bg-danger rounded-pill position-absolute" style="top: -6px; right: -6px; font-size: 0.65rem; padding: 0.2rem 0.4rem;">
+                    <c:out value="${unreadCount > 99 ? '99+' : unreadCount}" />
+                </span>
+            </c:if>
+        </a>
 
         <!-- User Role Identity Pill -->
         <div class="user-menu-pill">

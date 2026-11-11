@@ -73,6 +73,12 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a href="${ctx}/admin/notifications" class="sidebar-link ${activeMenu == 'notifications' ? 'active' : ''}">
+                        <i data-lucide="bell"></i>
+                        <span>Notification Engine</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a href="${ctx}/admin/audit-logs" class="sidebar-link ${activeMenu == 'audit-logs' ? 'active' : ''}">
                         <i data-lucide="shield-check"></i>
                         <span>Audit Logs</span>
@@ -114,9 +120,15 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#feedback" class="sidebar-link">
-                        <i data-lucide="star"></i>
-                        <span>Feedback</span>
+                    <a href="${ctx}/doctor/notifications" class="sidebar-link ${activeMenu == 'notifications' ? 'active' : ''}">
+                        <i data-lucide="bell"></i>
+                        <span>Notifications</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="${ctx}/doctor/preferences" class="sidebar-link ${activeMenu == 'preferences' ? 'active' : ''}">
+                        <i data-lucide="settings"></i>
+                        <span>Preferences</span>
                     </a>
                 </li>
             </c:when>
@@ -125,45 +137,39 @@
             <c:otherwise>
                 <li class="sidebar-section-title">My Health Portal</li>
                 <li class="sidebar-item">
-                    <a href="${ctx}/patient/dashboard" class="sidebar-link active">
+                    <a href="${ctx}/patient/dashboard" class="sidebar-link ${activeMenu == 'dashboard' ? 'active' : ''}">
                         <i data-lucide="layout-dashboard"></i>
                         <span>Overview</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#profile" class="sidebar-link">
+                    <a href="${ctx}/patient/profile" class="sidebar-link ${activeMenu == 'profile' ? 'active' : ''}">
                         <i data-lucide="user"></i>
                         <span>My Profile</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#find-doctors" class="sidebar-link">
+                    <a href="${ctx}/patient/doctors" class="sidebar-link ${activeMenu == 'doctors' ? 'active' : ''}">
                         <i data-lucide="search"></i>
                         <span>Find Doctors</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#appointments" class="sidebar-link">
+                    <a href="${ctx}/patient/appointments" class="sidebar-link ${activeMenu == 'appointments' ? 'active' : ''}">
                         <i data-lucide="calendar"></i>
                         <span>My Appointments</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#medical-history" class="sidebar-link">
-                        <i data-lucide="history"></i>
-                        <span>Medical History</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#prescriptions" class="sidebar-link">
-                        <i data-lucide="pill"></i>
-                        <span>Prescriptions</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#notifications" class="sidebar-link">
+                    <a href="${ctx}/patient/notifications" class="sidebar-link ${activeMenu == 'notifications' ? 'active' : ''}">
                         <i data-lucide="bell"></i>
                         <span>Notifications</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="${ctx}/patient/preferences" class="sidebar-link ${activeMenu == 'preferences' ? 'active' : ''}">
+                        <i data-lucide="settings"></i>
+                        <span>Preferences</span>
                     </a>
                 </li>
             </c:otherwise>

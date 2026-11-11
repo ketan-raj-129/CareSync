@@ -53,6 +53,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AvailabilityService availabilityService;
     private final AuditLogDao auditLogDao;
     private final ConnectionSupplier connectionSupplier;
+    private NotificationEventService notificationEventService;
 
     @FunctionalInterface
     public interface ConnectionSupplier {
@@ -75,6 +76,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         this.availabilityService = availabilityService;
         this.auditLogDao = auditLogDao;
         this.connectionSupplier = connectionSupplier;
+    }
+
+    public void setNotificationEventService(NotificationEventService notificationEventService) {
+        this.notificationEventService = notificationEventService;
     }
 
     @Override
@@ -162,6 +167,14 @@ public class AppointmentServiceImpl implements AppointmentService {
             conn.commit();
             logger.info("Successfully confirmed booking {} for patient {} with doctor {}",
                     savedAppointment.getReferenceNumber(), patientId, doctorId);
+
+            if (notificationEventService != null) {
+                try {
+                    notificationEventService.notifyAppointmentBooked(savedAppointment, patientOpt.get(), doctorOpt.get());
+                } catch (Exception ex) {
+                    logger.warn("Failed to dispatch appointment booked notification: {}", ex.getMessage());
+                }
+            }
             return savedAppointment;
         } catch (SlotConflictException e) {
             rollbackQuietly(conn);
@@ -299,6 +312,16 @@ public class AppointmentServiceImpl implements AppointmentService {
                 }
             } catch (Exception e) {
                 logger.warn("Failed to audit log appointment cancellation: {}", e.getMessage());
+            }
+
+            if (notificationEventService != null) {
+                try {
+                    Patient pt = patientDao != null ? patientDao.findById(patientId).orElse(null) : null;
+                    Doctor doc = (doctorDao != null && apt.getDoctorId() != null) ? doctorDao.findById(apt.getDoctorId()).orElse(null) : null;
+                    notificationEventService.notifyAppointmentCancelled(apt, pt, doc, "PATIENT", reason);
+                } catch (Exception ex) {
+                    logger.warn("Failed to dispatch appointment cancelled notification: {}", ex.getMessage());
+                }
             }
             logger.info("Appointment ID {} successfully cancelled by patient {}", appointmentId, patientId);
         }

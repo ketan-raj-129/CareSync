@@ -7,7 +7,7 @@
 [![Tomcat](https://img.shields.io/badge/Apache%20Tomcat-10.1-yellow.svg)](https://tomcat.apache.org/)
 [![Database](https://img.shields.io/badge/PostgreSQL-Neon%20Cloud-336791.svg)](https://neon.tech/)
 [![Frontend](https://img.shields.io/badge/Bootstrap-5.3-7952B3.svg)](https://getbootstrap.com/)
-[![Status](https://img.shields.io/badge/Phase%206-Admin%20Portal%20Completed-10B981.svg)](#)
+[![Status](https://img.shields.io/badge/Phase%207-Notification%20Engine%20Completed-10B981.svg)](#)
 
 CareSync is a modern, web-based healthcare management SaaS application designed for university-level advanced Java web development evaluation and real-world clinical operations. It connects patients, medical practitioners (doctors), and clinic administrators within a secure, high-performance digital environment.
 
@@ -243,6 +243,6 @@ The application is accessible locally through the following context-aware endpoi
 - **Phase 4:** Patient Portal, Doctor Search & Appointment Booking Engine *(COMPLETED)*
 - **Phase 5:** Doctor Portal, Availability Manager, Consultations & Prescriptions *(COMPLETED)*
 - **Phase 6:** Admin Portal, Doctor Credentialing, System Governance & Audit Trail *(COMPLETED)*
-- **Phase 7:** Advanced Core Java Concepts, Concurrency & Scheduled Tasks
+- **Phase 7:** Notification & Communication Engine, Transactional Outbox, In-App Inboxes & Reminder Scheduler *(COMPLETED)*
 - **Phase 8:** Analytics, Chart.js Dashboards & Real-Time Alerts
 - **Phase 9:** Comprehensive QA, Cross-Browser Testing & Final Submission

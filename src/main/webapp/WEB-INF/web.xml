@@ -394,6 +394,59 @@
     </servlet-mapping>
 
     <!-- ================================================================= -->
+    <!-- Phase 7: Notification & Communication Engine Servlets             -->
+    <!-- ================================================================= -->
+    <servlet>
+        <servlet-name>PatientNotificationServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.PatientNotificationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PatientNotificationServlet</servlet-name>
+        <url-pattern>/patient/notifications</url-pattern>
+        <url-pattern>/patient/notifications/read</url-pattern>
+        <url-pattern>/patient/notifications/read-all</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PatientPreferenceServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.PatientPreferenceServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PatientPreferenceServlet</servlet-name>
+        <url-pattern>/patient/preferences</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorNotificationServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorNotificationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorNotificationServlet</servlet-name>
+        <url-pattern>/doctor/notifications</url-pattern>
+        <url-pattern>/doctor/notifications/read</url-pattern>
+        <url-pattern>/doctor/notifications/read-all</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorPreferenceServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.DoctorPreferenceServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorPreferenceServlet</servlet-name>
+        <url-pattern>/doctor/preferences</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminNotificationServlet</servlet-name>
+        <servlet-class>com.caresync.servlet.AdminNotificationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminNotificationServlet</servlet-name>
+        <url-pattern>/admin/notifications</url-pattern>
+        <url-pattern>/admin/notifications/retry</url-pattern>
+    </servlet-mapping>
+
+    <!-- ================================================================= -->
     <!-- Home & Navigation Servlet -->
     <!-- ================================================================= -->
     <servlet>

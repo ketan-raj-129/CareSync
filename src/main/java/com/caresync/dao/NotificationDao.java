@@ -18,5 +18,21 @@ public interface NotificationDao extends GenericDao<Notification, Long> {
     boolean markAllAsRead(Long userId);
 
     Notification save(Notification notification, Connection conn);
+
+    default List<Notification> findPaginatedByUserId(Long userId, int offset, int limit) {
+        return List.of();
+    }
+
+    default long countByUserId(Long userId) {
+        return 0L;
+    }
+
+    default List<Notification> findPaginatedAll(String query, String type, int offset, int limit) {
+        return List.of();
+    }
+
+    default long countFilteredAll(String query, String type) {
+        return 0L;
+    }
 }
 
